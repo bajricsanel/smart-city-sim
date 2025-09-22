@@ -1,0 +1,58 @@
+enum SignalState {
+  RED
+  YELLOW
+  GREEN
+}
+
+enum EventType {
+  ACCIDENT
+  CONGESTION
+  ROADWORK
+}
+
+type Intersection {
+  id: ID!
+  name: String!
+  lat: Float!
+  lng: Float!
+}
+
+type Signal {
+  id: ID!
+  intersectionId: ID!
+  state: SignalState!
+  lastSwitchAt: String!
+}
+
+type Metrics {
+  intersectionId: ID!
+  vehicleCount: Int!
+  avgSpeed: Float!
+  lastUpdatedAt: String!
+}
+
+type Event {
+  id: ID!
+  type: EventType!
+  intersectionId: ID!
+  severity: Int!
+}
+
+type Prediction {
+  level: String!
+  score: Float!
+  reason: String!
+}
+
+type Query {
+  intersections: [Intersection!]!
+  signal(id: ID!): Signal
+  liveMetrics(intersectionId: ID!): Metrics
+  events(intersectionId: ID!): [Event!]!
+  predictCongestion(intersectionId: ID!, horizonMins: Int!): Prediction!
+}
+
+type Mutation {
+  switchSignal(id: ID!, state: SignalState!): Signal!
+  injectEvent(intersectionId: ID!, type: EventType!, severity: Int!): Event!
+}
